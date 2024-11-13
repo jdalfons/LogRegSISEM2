@@ -1,0 +1,11 @@
+Package: LogRegSISEM2
+Title: Logistic regression hand made package
+Version: 0.0.1
+Authors@R: 
+    person("Juan", "Alfonso", , "jalfonsooc@univ-lyon2.fr", role = c("aut", "cre"),
+           comment = c(ORCID = "0009-0008-3105-0285"))
+Description: Logistic regression hand made package made for Students of M2 SISE of Lyon in France
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
