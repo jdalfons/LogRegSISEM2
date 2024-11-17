@@ -81,7 +81,7 @@ MultinomialLogisticRegression <- R6Class("MultinomialLogisticRegression",
       # Extract response and predictor matrices from the formula
       mf <- model.frame(formula, data)
       self$y <- model.response(mf)
-      self$X <- model.matrix(~ . - 1, mf[, -1]) # Drop the intercept as we add it manually later
+      self$X <- model.matrix(~ ., mf[, -1]) # Include the intercept
 
       # Determine the number of classes
       self$num_classes <- length(unique(self$y))
@@ -119,10 +119,13 @@ MultinomialLogisticRegression <- R6Class("MultinomialLogisticRegression",
       }
 
       # Preprocess the new data
-      new_X <- model.matrix(~ . - 1, new_data)
+      new_X <- model.matrix(~ ., new_data) # Include the intercept
 
-      # Add intercept
-      new_X <- cbind(1, new_X)
+      # Ensure new_X has the same number of columns as X used in fitting
+      if (ncol(new_X) != ncol(self$X)) {
+        cat("Number of predictors in new data:", ncol(new_X), "\n")
+        stop("The new data does not have the same number of predictors as the training data.")
+      }
 
       # Reshape coefficients into a matrix
       beta <- matrix(self$coefficients, ncol = self$num_classes - 1)
