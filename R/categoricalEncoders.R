@@ -62,6 +62,9 @@
 #' verifier$get_dataset()
 #'
 #' @export
+
+library(R6)
+
 CategoricalVerifier <- R6Class("CategoricalVerifier",
   public = list(
     dataset = NULL,
