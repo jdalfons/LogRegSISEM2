@@ -47,6 +47,9 @@
 #' print(summary)
 #'
 #' @export
+
+library(R6)
+
 MultinomialLogisticRegression <- R6Class("MultinomialLogisticRegression",
   public = list(
     #' @field formula The formula specifying the model.
