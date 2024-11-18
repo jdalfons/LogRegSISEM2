@@ -40,16 +40,6 @@ Returns the processed dataset after applying the encodings.
 }
 }
 
-\section{Fields}{
-
-\describe{
-\item{\code{dataset}}{A \code{data.frame} containing the dataset to be processed.}
-\item{\code{categorical_vars}}{A character vector of the names of categorical variables.}
-\item{\code{encoded_vars}}{A list to store information about the encoded variables.}
-\item{\code{encoding_dict}}{A named list specifying the encoding methods for each categorical variable.}
-}
-}
-
 \examples{
 # Sample dataset
 data <- data.frame(

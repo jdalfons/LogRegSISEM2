@@ -1,5 +1,8 @@
+library(R6)
+
 #' @title CategoricalVerifier Class
-#' @description A class to handle encoding of categorical variables in a dataset.
+#' @description
+#' A class to handle encoding of categorical variables in a dataset.
 #'
 #' This class provides various encoding methods such as label encoding, one-hot encoding,
 #' frequency encoding, and binary encoding. It can dynamically apply these encodings based
@@ -33,14 +36,6 @@
 #'   }
 #' }
 #'
-#' @section Fields:
-#' \describe{
-#'   \item{\code{dataset}}{A \code{data.frame} containing the dataset to be processed.}
-#'   \item{\code{categorical_vars}}{A character vector of the names of categorical variables.}
-#'   \item{\code{encoded_vars}}{A list to store information about the encoded variables.}
-#'   \item{\code{encoding_dict}}{A named list specifying the encoding methods for each categorical variable.}
-#' }
-#'
 #' @examples
 #' # Sample dataset
 #' data <- data.frame(
@@ -59,9 +54,7 @@
 #' processed_data <- verifier$get_dataset()
 #' print(processed_data)
 #'
-#' @name CategoricalVerifier
 #' @export
-library(R6)
 CategoricalVerifier <- R6Class("CategoricalVerifier",
   public = list(
     #' @field dataset The dataset to be processed.
@@ -106,9 +99,10 @@ CategoricalVerifier <- R6Class("CategoricalVerifier",
     #' Apply one-hot encoding to a variable.
     #' @param var A character string representing the variable name.
     one_hot_encoding = function(var) {
-      library(dummies)
-      dummies <- dummy(self$dataset[[var]], sep = "_")
-      self$dataset <- cbind(self$dataset, dummies)
+      # Use model.matrix for one-hot encoding
+      one_hot <- model.matrix(~ . - 1, data.frame(self$dataset[[var]]))
+      colnames(one_hot) <- paste0(var, "_", colnames(one_hot))
+      self$dataset <- cbind(self$dataset, one_hot)
       self$dataset[[var]] <- NULL
     },
 
