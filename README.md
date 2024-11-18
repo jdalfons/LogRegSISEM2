@@ -1,50 +1,54 @@
-# Logistic Regression Package
 
-This package provides tools for performing logistic regression analysis in R.
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# LogRegSISEM2
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of LogRegSISEM2 is to …
 
 ## Installation
 
+You can install the development version of LogRegSISEM2 like so:
+
+Ensure you have `DevTools` installed
+
 To install the package, use the following command in R:
 
-```R
-install.packages("LogRegSISEM2")
+``` r
+install_github("jdalfons/LogRegSISEM2")
 ```
 
-## Usage
+## Example
 
-Here is a basic example of how to use the package:
+This is a basic example which shows you how to solve a common problem:
 
-```R
+``` r
 library(LogRegSISEM2)
-
-# Load your data
-data <- read.csv("path/to/your/data.csv")
-
-# Fit a logistic regression model
-model <- log_reg(data, response_variable, predictor_variables)
-
-# Summarize the model
-summary(model)
+## basic example code
 ```
 
-## Functions
+What is special about using `README.Rmd` instead of just `README.md`?
+You can include R chunks like so:
 
-- `log_reg(data, response, predictors)`: Fits a logistic regression model.
-- `summary(model)`: Provides a summary of the fitted model.
+``` r
+summary(cars)
+#>      speed           dist       
+#>  Min.   : 4.0   Min.   :  2.00  
+#>  1st Qu.:12.0   1st Qu.: 26.00  
+#>  Median :15.0   Median : 36.00  
+#>  Mean   :15.4   Mean   : 42.98  
+#>  3rd Qu.:19.0   3rd Qu.: 56.00  
+#>  Max.   :25.0   Max.   :120.00
+```
 
-## License
+You’ll still need to render `README.Rmd` regularly, to keep `README.md`
+up-to-date. `devtools::build_readme()` is handy for this.
 
-This project is licensed under the MIT License.
+You can also embed plots, for example:
 
-## Contributing
+<img src="man/figures/README-pressure-1.png" width="100%" />
 
-| Nom                        | GitHub Profile                     |
-|----------------------------|------------------------------------|
-| ALEXIS DARDELET             | [pbrbn](https://github.com/AlexisDardelet)  |
-| BERTRAND KLEIN             | [bertrandklein](https://github.com/bertrandklein) |
-| JUAN DIEGO ALFONSO OCAMPO  | [jdalfons](https://github.com/jdalfons) |
-
-
-## Contact
-
-For any questions or inquiries, please contact Juan Diego A. at [jalfonsooc@univ-lyon2.fr](mailto:jalfonsooc@univ-lyon2.fr).
+In that case, don’t forget to commit and push the resulting figure
+files, so they display on GitHub and CRAN.
