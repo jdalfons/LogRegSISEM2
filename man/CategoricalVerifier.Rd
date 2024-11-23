@@ -3,6 +3,37 @@
 \name{CategoricalVerifier}
 \alias{CategoricalVerifier}
 \title{CategoricalVerifier Class}
+\usage{
+# Sample dataset
+data <- data.frame(
+  Category1 = factor(c("A", "B", "A", "C")),
+  Category2 = c("X", "Y", "X", "Z"),
+  Value = c(10, 20, 30, 40)
+)
+
+# Choose any of the categories available to encode: 
+# label = label encoding (Default), 
+# one_hot = One-Hot Encoding, 
+# frequency = frequency encoding, 
+# binary = binary encoding
+
+# Note:
+# If you don't specify any encoding method, it will use default encoding.
+
+# Create an instance of CategoricalVerifier
+verifier <- CategoricalVerifier$new(data, encoding_dict = list(Category1 = "one_hot"))
+
+# Apply encodings
+verifier$apply_encoding()
+
+# Get the processed dataset
+processed_data <- verifier$get_dataset()
+print(processed_data)
+
+# Get the processed dataset
+processed_data <- verifier$get_dataset()
+print(processed_data)
+}
 \description{
 A class to handle encoding of categorical variables in a dataset.
 
@@ -40,25 +71,6 @@ Returns the processed dataset after applying the encodings.
 }
 }
 
-\examples{
-# Sample dataset
-data <- data.frame(
-  Category1 = factor(c("A", "B", "A", "C")),
-  Category2 = c("X", "Y", "X", "Z"),
-  Value = c(10, 20, 30, 40)
-)
-
-# Create an instance of CategoricalVerifier
-verifier <- CategoricalVerifier$new(data, encoding_dict = list(Category1 = "one_hot"))
-
-# Apply encodings
-verifier$apply_encoding()
-
-# Get the processed dataset
-processed_data <- verifier$get_dataset()
-print(processed_data)
-
-}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{

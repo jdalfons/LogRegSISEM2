@@ -1,9 +1,18 @@
 #' @title Logistic Regression Class
 #' @description
+#' Multinomial logistic regression likelihood function.
+#' @param params A numeric vector of parameters to optimize.
+#' @param X A matrix of predictors.
+#' @param y A response vector.
+#' @param num_classes The number of unique response classes.
 #' This class implements logistic regression for both binary and multinomial cases using base R functions.
 #' It supports fitting the model, predicting probabilities, and summarizing the fitted model.
 #'
-#' @examples
+#' @usage
+#' 
+#' # Note:
+#' ## Ensure to transform your data first if you have categorical variables before using it in any model.
+#' ## Use CategoricalVerifier for more information.
 #' # Binary Logistic Regression Example
 #' set.seed(123)
 #' data <- data.frame(

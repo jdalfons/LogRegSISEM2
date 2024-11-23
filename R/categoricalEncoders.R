@@ -1,6 +1,7 @@
 library(R6)
 
 #' @title CategoricalVerifier Class
+#' 
 #' @description
 #' A class to handle encoding of categorical variables in a dataset.
 #'
@@ -12,7 +13,37 @@ library(R6)
 #' @field categorical_vars Names of categorical variables in the dataset.
 #' @field encoded_vars A list of encoded variables.
 #' @field encoding_dict A dictionary specifying encoding methods for each variable.
-#'
+#' @usage 
+#' # Sample dataset
+#' data <- data.frame(
+#'   Category1 = factor(c("A", "B", "A", "C")),
+#'   Category2 = c("X", "Y", "X", "Z"),
+#'   Value = c(10, 20, 30, 40)
+#' )
+#' 
+#' # Choose any of the categories available to encode: 
+#' # label = label encoding (Default), 
+#' # one_hot = One-Hot Encoding, 
+#' # frequency = frequency encoding, 
+#' # binary = binary encoding
+#' 
+#' # Note:
+#' # If you don't specify any encoding method, it will use default encoding.
+#' 
+#' # Create an instance of CategoricalVerifier
+#' verifier <- CategoricalVerifier$new(data, encoding_dict = list(Category1 = "one_hot"))
+#' 
+#' # Apply encodings
+#' verifier$apply_encoding()
+#' 
+#' # Get the processed dataset
+#' processed_data <- verifier$get_dataset()
+#' print(processed_data)
+#' 
+
+#' # Get the processed dataset
+#' processed_data <- verifier$get_dataset()
+#' print(processed_data)
 #' @section Public Methods:
 #' \describe{
 #'   \item{\code{initialize(dataset, encoding_dict = NULL)}}{
@@ -41,37 +72,13 @@ library(R6)
 #'   }
 #' }
 #'
-#' @examples
-#' # Sample dataset
-#' data <- data.frame(
-#'   Category1 = factor(c("A", "B", "A", "C")),
-#'   Category2 = c("X", "Y", "X", "Z"),
-#'   Value = c(10, 20, 30, 40)
-#' )
-#'
-#' # Create an instance of CategoricalVerifier
-#' verifier <- CategoricalVerifier$new(data, encoding_dict = list(Category1 = "one_hot"))
-#'
-#' # Apply encodings
-#' verifier$apply_encoding()
-#'
-#' # Get the processed dataset
-#' processed_data <- verifier$get_dataset()
-#' print(processed_data)
-#'
 #' @export
+#'
 CategoricalVerifier <- R6Class("CategoricalVerifier",
   public = list(
-    #' @field dataset The dataset to be processed.
     dataset = NULL,
-
-    #' @field categorical_vars Names of categorical variables in the dataset.
     categorical_vars = NULL,
-
-    #' @field encoded_vars A list of encoded variables.
     encoded_vars = list(),
-
-    #' @field encoding_dict A dictionary specifying encoding methods for each variable.
     encoding_dict = NULL,
 
     #' @description
@@ -103,7 +110,7 @@ CategoricalVerifier <- R6Class("CategoricalVerifier",
     #' @description
     #' Apply one-hot encoding to a variable.
     #' @param var A character string representing the variable name.
-    one_hot_encoding <- function(var) {
+    one_hot_encoding = function(var) {
 
       # Extracting column and getting unique categories
       data_column <- self$dataset[[var]]
@@ -140,9 +147,8 @@ CategoricalVerifier <- R6Class("CategoricalVerifier",
     #' @description
     #' Apply binary encoding to a variable.
     #' @param var A character string representing the variable name.
-    binary_encoding <- function(var) {
-
-      # Extracting column and getting unique categories
+    binary_encoding = function(var) {
+      # Extract the column and get unique categories
       data_column <- self$dataset[[var]]
       unique_categories <- unique(data_column)
 
@@ -151,28 +157,22 @@ CategoricalVerifier <- R6Class("CategoricalVerifier",
 
       # Find the maximum number of bits required
       max_bits <- ceiling(log2(length(unique_categories)))
-
-      # Empty matrix
-      n <- length(data_column)
-      binary_matrix <- matrix(0, nrow = n, ncol = max_bits)
-
-      # Fill the matrix
-      for (i in seq_along(data_column)) {
-        category_index <- category_map[data_column[i]]          # Integer mapping
-        binary_representation <- intToBits(category_index)      # Convert to binary
-        binary_vector <- as.integer(rev(as.integer(binary_representation))[1:max_bits])  # Extract the required bits
-        binary_matrix[i, ] <- binary_vector                     # Fill the matrix
-      }
-
-      # Name the columns based on bits
-      colnames(binary_matrix) <- paste0(var, "_Bit_", seq_len(max_bits))
-
-      # Add the Binary Encoded matrix to the dataset
-      self$dataset <- cbind(self$dataset, binary_matrix)
+      
+      # Convert the data column to integers based on category mapping
+      category_indices <- category_map[data_column]
+      
+      # Generate binary strings for each row
+      binary_strings <- sapply(category_indices, function(x) {
+        paste0(rev(as.integer(intToBits(x))[1:max_bits]), collapse = "")
+      })
+      
+      # Add the binary string column to the dataset
+      self$dataset[[paste0(var)]] <- binary_strings
 
       # Remove the original column
-      self$dataset[[var]] <- NULL
-    },
+      # self$dataset[[var]] <- NULL
+
+},
 
 
     #' @description
