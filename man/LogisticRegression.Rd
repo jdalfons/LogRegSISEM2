@@ -3,11 +3,10 @@
 \name{LogisticRegression}
 \alias{LogisticRegression}
 \title{Logistic Regression Class}
-\description{
-This class implements logistic regression for both binary and multinomial cases using base R functions.
-It supports fitting the model, predicting probabilities, and summarizing the fitted model.
-}
-\examples{
+\usage{
+# Note:
+## Ensure to transform your data first if you have categorical variables before using it in any model.
+## Use CategoricalVerifier for more information.
 # Binary Logistic Regression Example
 set.seed(123)
 data <- data.frame(
@@ -28,7 +27,9 @@ data$y <- factor(sample(c("class1", "class2", "class3"), size = 100, replace = T
 multi_model <- LogisticRegression$new(y ~ x1 + x2, data)
 multi_model$fit()
 multi_model$summary()
-
+}
+\description{
+Multinomial logistic regression likelihood function.
 }
 \section{Methods}{
 \subsection{Public methods}{
