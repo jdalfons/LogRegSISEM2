@@ -8,6 +8,11 @@ library(R6)
 #' frequency encoding, and binary encoding. It can dynamically apply these encodings based
 #' on user-defined preferences or defaults.
 #'
+#' @field dataset The dataset to be processed.
+#' @field categorical_vars Names of categorical variables in the dataset.
+#' @field encoded_vars A list of encoded variables.
+#' @field encoding_dict A dictionary specifying encoding methods for each variable.
+#'
 #' @section Public Methods:
 #' \describe{
 #'   \item{\code{initialize(dataset, encoding_dict = NULL)}}{
@@ -98,11 +103,29 @@ CategoricalVerifier <- R6Class("CategoricalVerifier",
     #' @description
     #' Apply one-hot encoding to a variable.
     #' @param var A character string representing the variable name.
-    one_hot_encoding = function(var) {
-      # Use model.matrix for one-hot encoding
-      one_hot <- model.matrix(~ . - 1, data.frame(self$dataset[[var]]))
-      colnames(one_hot) <- paste0(var, "_", colnames(one_hot))
-      self$dataset <- cbind(self$dataset, one_hot)
+    one_hot_encoding <- function(var) {
+
+      # Extracting column and getting unique categories
+      data_column <- self$dataset[[var]]
+      unique_categories <- unique(data_column)
+
+      # Create an empty matrix for One-Hot Encoding
+      n <- length(data_column)
+      k <- length(unique_categories)
+      one_hot_matrix <- matrix(0, nrow = n, ncol = k)
+
+      # Fill the matrix
+      for (i in seq_along(data_column)) {
+        category <- data_column[i]
+        category_index <- which(unique_categories == category)
+        one_hot_matrix[i, category_index] <- 1
+      }
+
+      # Naming the columns based on categories
+      colnames(one_hot_matrix) <- paste0(var, "_", unique_categories)
+
+      # Add the One-Hot Encoded matrix to the dataset and removing old column
+      self$dataset <- cbind(self$dataset, one_hot_matrix)
       self$dataset[[var]] <- NULL
     },
 
@@ -117,13 +140,40 @@ CategoricalVerifier <- R6Class("CategoricalVerifier",
     #' @description
     #' Apply binary encoding to a variable.
     #' @param var A character string representing the variable name.
-    binary_encoding = function(var) {
-      library(mltools)
-      binary_encoded <- mltools::binary_encoding(self$dataset[[var]])
-      colnames(binary_encoded) <- paste(var, colnames(binary_encoded), sep = "_")
-      self$dataset <- cbind(self$dataset, binary_encoded)
+    binary_encoding <- function(var) {
+
+      # Extracting column and getting unique categories
+      data_column <- self$dataset[[var]]
+      unique_categories <- unique(data_column)
+
+      # Map each category to a unique integer
+      category_map <- setNames(seq_along(unique_categories), unique_categories)
+
+      # Find the maximum number of bits required
+      max_bits <- ceiling(log2(length(unique_categories)))
+
+      # Empty matrix
+      n <- length(data_column)
+      binary_matrix <- matrix(0, nrow = n, ncol = max_bits)
+
+      # Fill the matrix
+      for (i in seq_along(data_column)) {
+        category_index <- category_map[data_column[i]]          # Integer mapping
+        binary_representation <- intToBits(category_index)      # Convert to binary
+        binary_vector <- as.integer(rev(as.integer(binary_representation))[1:max_bits])  # Extract the required bits
+        binary_matrix[i, ] <- binary_vector                     # Fill the matrix
+      }
+
+      # Name the columns based on bits
+      colnames(binary_matrix) <- paste0(var, "_Bit_", seq_len(max_bits))
+
+      # Add the Binary Encoded matrix to the dataset
+      self$dataset <- cbind(self$dataset, binary_matrix)
+
+      # Remove the original column
       self$dataset[[var]] <- NULL
     },
+
 
     #' @description
     #' Apply specified encodings to all categorical variables in the dataset.
@@ -137,7 +187,7 @@ CategoricalVerifier <- R6Class("CategoricalVerifier",
       } else {
         for (var in self$categorical_vars) {
           encoding_method <- self$encoding_dict[[var]]
-          
+
           if (is.null(encoding_method)) {
             self$label_encoding(var)
           } else if (encoding_method == "label") {
