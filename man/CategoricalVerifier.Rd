@@ -44,13 +44,7 @@ verifier$apply_encoding()
 
 
 # Note:
-# If you don't specify any encoding method, it will use default encoding.
-
-# Create an instance of CategoricalVerifier
-verifier <- CategoricalVerifier$new(data, encoding_dict = list(Category1 = "one_hot"))
-
-# Apply encodings
-verifier$apply_encoding()
+# If you don't specify any encoding method, it will use default encoding (Label Encoding).
 
 # Get the processed dataset
 processed_data <- verifier$get_dataset()

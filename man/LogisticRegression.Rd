@@ -7,24 +7,6 @@
 \description{
 This R6 class implements a logistic regression model with gradient descent optimization.
 }
-\section{Fields}{
-
-\describe{
-\item{\code{learning_rate}}{The learning rate for gradient descent. Default is 0.01.}
-
-\item{\code{iterations}}{The number of iterations for gradient descent. Default is 1000.}
-
-\item{\code{X}}{The feature matrix with an added intercept term.}
-
-\item{\code{y}}{The response vector.}
-
-\item{\code{beta}}{The coefficients of the logistic regression model.}
-
-\item{\code{n_features}}{The number of features in the model.}
-
-\item{\code{ll}}{The log-likelihood of the model.}
-}}
-
 \examples{
 # Generate synthetic dataset similar to your previous example
 # But now we'll use iris dataset for a more standard comparison
@@ -58,6 +40,45 @@ reglog_accuracy <- mean(reglog_pred_class == y_test)
 reglog_log_likelihood <- reglog_model$get_log_likelihood()
 reglog_coefficients <- reglog_model$get_coefficients()
 reglog_computation_time <- as.numeric(reglog_end_time - reglog_start_time)
+Initialize the class
+}
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{learning_rate}}{The learning rate for gradient descent. Default is 0.01.}
+
+\item{\code{iterations}}{The number of iterations for gradient descent. Default is 1000.}
+
+\item{\code{X}}{The feature matrix with an added intercept term.}
+
+\item{\code{y}}{The response vector.}
+
+\item{\code{beta}}{The coefficients of the logistic regression model.}
+
+\item{\code{n_features}}{The number of features in the model.}
+
+\item{\code{ll}}{The log-likelihood of the model.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{learning_rate}}{The learning rate for gradient descent. Default is 0.01.}
+
+\item{\code{iterations}}{The number of iterations for gradient descent. Default is 1000.}
+
+\item{\code{X}}{The feature matrix with an added intercept term.}
+
+\item{\code{y}}{The response vector.}
+
+\item{\code{beta}}{The coefficients of the logistic regression model.}
+
+\item{\code{n_features}}{The number of features in the model.}
+
+\item{\code{ll}}{The log-likelihood of the model.}
+}
+\if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{

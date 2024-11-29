@@ -54,3 +54,6 @@ rsconnect/
 
 # Renv
 renv/
+
+# documentation
+*.html
