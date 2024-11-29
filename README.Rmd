@@ -178,6 +178,10 @@ cat("Coefficients:", reglog_coefficients, "\n")
 > Coefficients: 0.3097684 -0.9693679 1.620301 
 ```
 
+## Contribute
+
+To contribute to this project, please refer to the [contribution guidelines](https://github.com/jdalfons/LogRegSISEM2/blob/main/contribute/contribute.md).
+
 ## License
 
 This project is licensed under the MIT License.
