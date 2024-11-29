@@ -20,7 +20,7 @@ To install the package, use the following command in R:
 install_github("jdalfons/LogRegSISEM2")
 ```
 
-## Usage
+## Use
 
 Here is a basic example of how to use the package:
 
@@ -35,6 +35,49 @@ model <- log_reg(data, response_variable, predictor_variables)
 
 # Summarize the model
 summary(model)
+```
+
+```r
+data <- data.frame(
+  Category1 = factor(c("A", "B", "A", "C", "A", "C")),
+  Category2 = c("X", "Y", "X", "Z", "T", "H"),
+  Value = c(10, 20, 30, 40, 60, 60)
+)
+
+verifier <- CategoricalVerifier$new(data, encoding_dict = list(Category1 = "frequency", Category2 = "binary"))
+verifier$get_dataset()
+
+```
+# Output of verifier$get_dataset()
+# A tibble: 6 × 3
+  Category1 Category2 Value
+  <fct>     <chr>     <dbl>
+1 A         X            10
+2 B         Y            20
+3 A         X            30
+4 C         Z            40
+5 A         T            60
+6 C         H            60
+```
+
+```r
+verifier$apply_encoding()
+```
+Output
+
+```r
+
+```r
+# Output of verifier$apply_encoding()
+# A tibble: 6 × 3
+  Category1 Category2 Value
+  <dbl>     <dbl>     <dbl>
+1 0.5       1            10
+2 0.25      0            20
+3 0.5       1            30
+4 0.25      0            40
+5 0.5       0            60
+6 0.25      0            60
 ```
 
 ## Functions

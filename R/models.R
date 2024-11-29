@@ -1,155 +1,145 @@
-#' @title Logistic Regression Class
-#' @description
-#' Multinomial logistic regression likelihood function.
-#' @param params A numeric vector of parameters to optimize.
-#' @param X A matrix of predictors.
-#' @param y A response vector.
-#' @param num_classes The number of unique response classes.
-#' This class implements logistic regression for both binary and multinomial cases using base R functions.
-#' It supports fitting the model, predicting probabilities, and summarizing the fitted model.
+library(R6)
+
+#' Logistic Regression Model with Gradient Descent Optimization
 #'
-#' @usage
-#' 
-#' # Note:
-#' ## Ensure to transform your data first if you have categorical variables before using it in any model.
-#' ## Use CategoricalVerifier for more information.
-#' # Binary Logistic Regression Example
-#' set.seed(123)
-#' data <- data.frame(
-#'   x1 = rnorm(100),
-#'   x2 = rbinom(100, 1, 0.5),
-#'   y = factor(rbinom(100, 1, 0.5), levels = c(0, 1))
-#' )
-#' 
-#' # Instantiate and fit binary logistic regression
-#' binary_model <- LogisticRegression$new(y ~ x1 + x2, data)
-#' binary_model$fit()
-#' binary_model$summary()
-#' 
-#' # Multinomial Logistic Regression Example
-#' data$y <- factor(sample(c("class1", "class2", "class3"), size = 100, replace = TRUE))
-#' 
-#' # Instantiate and fit multinomial logistic regression
-#' multi_model <- LogisticRegression$new(y ~ x1 + x2, data)
-#' multi_model$fit()
-#' multi_model$summary()
-#' 
+#' This R6 class implements a logistic regression model with gradient descent optimization.
+#'
+#' @docType class
+#' @name LogisticRegression
+#' @import R6
 #' @export
+#' @field learning_rate The learning rate for gradient descent. Default is 0.01.
+#' @field iterations The number of iterations for gradient descent. Default is 1000.
+#' @field X The feature matrix with an added intercept term.
+#' @field y The response vector.
+#' @field beta The coefficients of the logistic regression model.
+#' @field n_features The number of features in the model.
+#' @field ll The log-likelihood of the model.
+#' @method LogisticRegression initialize
+#' @method LogisticRegression fit
+#' @method LogisticRegression predict_proba
+#' @method LogisticRegression predict
+#' @method LogisticRegression log_likelihood
+#' @method LogisticRegression get_coefficients
+#' @method LogisticRegression get_log_likelihood
+#' @method LogisticRegression sigmoid
+#'
+#' @examples
+#' # Generate synthetic dataset similar to your previous example
+#' # But now we'll use iris dataset for a more standard comparison
+#' data(iris)
+#'
+#' # Convert to binary classification (setosa vs. others)
+#' iris_binary <- iris[iris$Species != "versicolor", ]
+#' iris_binary$Species <- ifelse(iris_binary$Species == "setosa", 1, 0)
+#'
+#' # Prepare features and target
+#' X <- as.matrix(iris_binary[, c("Sepal.Length", "Sepal.Width")])
+#' y <- iris_binary$Species
+#'
+#' # Split data
+#' train_indices <- createDataPartition(y, p = 0.8, list = FALSE)
+#' X_train <- X[train_indices, ]
+#' y_train <- y[train_indices]
+#' X_test <- X[-train_indices, ]
+#' y_test <- y[-train_indices]
+#'
+#' # Method 1: Custom R6 Logistic Regression
+#' reglog_model <- LogisticRegression$new(learning_rate = 0.01, iterations = 1000)
+#' reglog_start_time <- Sys.time()
+#' reglog_model$fit(X_train, y_train)
+#' reglog_pred_proba <- reglog_model$predict_proba(X_test)
+#' reglog_pred_class <- reglog_model$predict(X_test)
+#' reglog_end_time <- Sys.time()
+#'
+#' # Calculate R6 Model Performance
+#' reglog_accuracy <- mean(reglog_pred_class == y_test)
+#' reglog_log_likelihood <- reglog_model$get_log_likelihood()
+#' reglog_coefficients <- reglog_model$get_coefficients()
+#' reglog_computation_time <- as.numeric(reglog_end_time - reglog_start_time)
+
 LogisticRegression <- R6Class("LogisticRegression",
   public = list(
-    formula = NULL,
-    data = NULL,
-    X = NULL,
-    y = NULL,
-    coefficients = NULL,
-    fitted_model = NULL,
-    num_classes = NULL,
-    is_binary = NULL,
-    
-    #' @description
-    #' Initialize the LogisticRegression class.
-    #' @param formula A formula specifying the response and predictors.
-    #' @param data A data.frame containing the dataset.
-    initialize = function(formula, data) {
-      self$formula <- formula
-      self$data <- data
-      
-      # Parse formula and create model frame
-      mf <- model.frame(formula, data)
-      self$y <- model.response(mf)
-      self$X <- model.matrix(~ ., mf[, -1]) # Include intercept
-      
-      # Determine if binary or multinomial
-      self$num_classes <- length(unique(self$y))
-      self$is_binary <- self$num_classes == 2
+    #' Initialize the class
+    #' @param learning_rate The learning rate for gradient descent. Default is 0.01.
+    #' @param iterations The number of iterations for gradient descent. Default is 1000.
+    initialize = function(learning_rate = 0.01, iterations = 1000) {
+      private$learning_rate <- learning_rate
+      private$iterations <- iterations
     },
-    
-    #' @description
-    #' Fit the logistic regression model.
-    fit = function() {
-      if (self$is_binary) {
-        self$fitted_model <- glm(self$formula, data = self$data, family = binomial())
-        self$coefficients <- coef(self$fitted_model)
-      } else {
-        # Multinomial case
-        initial_params <- rep(0, ncol(self$X) * (self$num_classes - 1))
-        self$fitted_model <- optim(
-          par = initial_params,
-          fn = private$multinomial_log_likelihood,
-          X = self$X,
-          y = self$y,
-          num_classes = self$num_classes,
-          method = "BFGS",
-          control = list(maxit = 1000)
-        )
-        self$coefficients <- self$fitted_model$par
+
+    #' Train the model using gradient descent
+    #' @param X The feature matrix.
+    #' @param y The response vector.
+    fit = function(X, y) {
+      private$X <- cbind(1, X)
+      private$y <- y
+      private$n_features <- ncol(private$X)
+      private$beta <- rep(0, private$n_features)
+
+      for (i in 1:private$iterations) {
+        z <- private$X %*% private$beta
+        h <- private$sigmoid(z)
+        gradient <- t(private$X) %*% (h - private$y) / length(private$y)
+        private$beta <- private$beta - private$learning_rate * gradient
       }
+
+      # Store log-likelihood
+      private$ll <- self$log_likelihood()
+
+      return(self)
     },
-    
-    #' @description
-    #' Predict probabilities for new data using the fitted model.
-    #' @param new_data A data.frame containing the predictors for new observations.
-    #' @return A matrix of predicted probabilities.
-    predict = function(new_data) {
-      if (is.null(self$fitted_model)) {
-        stop("Model has not been fitted yet. Call `fit()` first.")
-      }
-      
-      new_X <- model.matrix(~ ., new_data)
-      
-      if (self$is_binary) {
-        # Binary logistic regression
-        eta <- new_X %*% self$coefficients
-        probs <- 1 / (1 + exp(-eta))
-        return(probs)
-      } else {
-        # Multinomial logistic regression
-        beta <- matrix(self$coefficients, ncol = self$num_classes - 1)
-        beta <- cbind(0, beta)
-        eta <- new_X %*% beta
-        exp_eta <- exp(eta)
-        probs <- exp_eta / rowSums(exp_eta)
-        return(probs)
-      }
+
+    #' Predict probabilities
+    #' @param new_X The new feature matrix.
+    #' @return A vector of predicted probabilities.
+    predict_proba = function(new_X) {
+      new_X_with_intercept <- cbind(1, new_X)
+      private$sigmoid(new_X_with_intercept %*% private$beta)
     },
-    
-    #' @description
-    #' Summarize the fitted logistic regression model.
-    #' @return A summary of the fitted model, including coefficients and performance metrics.
-    summary = function() {
-      if (is.null(self$fitted_model)) {
-        stop("Model has not been fitted yet. Call `fit()` first.")
-      }
-      
-      if (self$is_binary) {
-        return(summary(self$fitted_model))
-      } else {
-        return(list(
-          coefficients = self$coefficients,
-          log_likelihood = -self$fitted_model$value,
-          num_iterations = self$fitted_model$counts
-        ))
-      }
+
+    #' Predict classes
+    #' @param new_X The new feature matrix.
+    #' @param threshold The threshold for class prediction. Default is 0.5.
+    #' @return A vector of predicted classes.
+    predict = function(new_X, threshold = 0.5) {
+      proba <- self$predict_proba(new_X)
+      as.numeric(proba >= threshold)
+    },
+
+    #' Log-likelihood calculation
+    #' @return The log-likelihood of the model.
+    log_likelihood = function() {
+      z <- private$X %*% private$beta
+      sum(private$y * z - log(1 + exp(z)))
+    },
+
+    #' Getter for coefficients
+    #' @return The coefficients of the logistic regression model.
+    get_coefficients = function() {
+      private$beta
+    },
+
+    #' Getter for log-likelihood
+    #' @return The log-likelihood of the model.
+    get_log_likelihood = function() {
+      private$ll
     }
   ),
-  
+
   private = list(
-    #' @description
-    #' Multinomial logistic regression likelihood function.
-    #' @param params A numeric vector of parameters to optimize.
-    #' @param X A matrix of predictors.
-    #' @param y A response vector.
-    #' @param num_classes The number of unique response classes.
-    multinomial_log_likelihood = function(params, X, y, num_classes) {
-      beta <- matrix(params, ncol = num_classes - 1)
-      beta <- cbind(0, beta) # Reference class
-      
-      eta <- X %*% beta
-      exp_eta <- exp(eta)
-      probs <- exp_eta / rowSums(exp_eta)
-      
-      y_matrix <- model.matrix(~ y - 1) # One-hot encoding
-      -sum(y_matrix * log(probs))
+    X = NULL,
+    y = NULL,
+    beta = NULL,
+    learning_rate = NULL,
+    iterations = NULL,
+    n_features = NULL,
+    ll = NULL,
+
+    sigmoid = function(z) {
+      # Sigmoid function
+      1 / (1 + exp(-z))
     }
   )
 )
+
