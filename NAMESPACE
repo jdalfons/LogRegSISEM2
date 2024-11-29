@@ -2,3 +2,4 @@
 
 export(CategoricalVerifier)
 export(LogisticRegression)
+import(R6)
