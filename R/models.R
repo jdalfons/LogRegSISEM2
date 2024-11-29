@@ -57,7 +57,6 @@ library(R6)
 #' reglog_log_likelihood <- reglog_model$get_log_likelihood()
 #' reglog_coefficients <- reglog_model$get_coefficients()
 #' reglog_computation_time <- as.numeric(reglog_end_time - reglog_start_time)
-
 LogisticRegression <- R6Class("LogisticRegression",
   public = list(
     #' Initialize the class
