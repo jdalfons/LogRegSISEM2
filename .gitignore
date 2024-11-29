@@ -51,3 +51,6 @@ rsconnect/
 .Rdata
 .DS_Store
 .quarto
+
+# Renv
+renv/

@@ -1,4 +1,7 @@
+^renv$
+^renv\.lock$
 ^LogRegSISEM2\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^README\.Rmd$
+^.git
