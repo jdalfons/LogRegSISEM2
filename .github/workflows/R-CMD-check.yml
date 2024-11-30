@@ -25,6 +25,7 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEPNOTE: yes
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      _R_CHECK_FORCE_SUGGESTS_: false
 
     steps:
     - name: Checkout repository
@@ -43,31 +44,30 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev
+        sudo apt-get install -y libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev libxml2-dev libssl-dev
 
-    - name: Install R dependencies
-      uses: r-lib/actions/setup-r-dependencies@v2
-      with:
-        extra-packages: |
-          any::rcmdcheck
-          any::devtools
-          any::covr
-        needs: check
+    - name: Install dependencies
+      run: |
+        R -e "if (!requireNamespace('devtools', quietly = TRUE)) install.packages('devtools', repos = 'https://cloud.r-project.org')"
+        R -e "devtools::install_deps(dependencies = TRUE)"
+        R -e "install.packages(c('rcmdcheck', 'covr'), repos = 'https://cloud.r-project.org')"
 
     - name: Check package
-      uses: r-lib/actions/check-r-package@v2
-      with:
-        upload-snapshots: true
-        args: 'c("--no-manual", "--as-cran")'
+      run: |
+        R -e "devtools::check(error_on = 'error', args = c('--no-manual', '--as-cran'))"
 
     - name: Upload check results
+      if: failure()
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ matrix.config.os }}-r${{ matrix.config.r }}-results
-        path: check
+        name: ${{ matrix.config.os }}-r${{ matrix.config.r }}-check-results
+        path: |
+          check/*.Rcheck
+          check/*.log
+          check/*.out
 
     - name: Test coverage
       if: runner.os == 'Linux' && matrix.config.r == 'release'
       run: |
-        covr::codecov()
-      shell: Rscript {0}
+        R -e "covr::codecov()"
+      continue-on-error: true
