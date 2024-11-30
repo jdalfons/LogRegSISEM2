@@ -21,7 +21,8 @@ X <- as.matrix(iris_binary[, c("Sepal.Length", "Sepal.Width")])
 y <- iris_binary$Species
 
 # Split data
-train_indices <- createDataPartition(y, p = 0.8, list = FALSE)
+set.seed(123)
+train_indices <- sample(seq_len(nrow(X)), size = 0.8 * nrow(X))
 X_train <- X[train_indices, ]
 y_train <- y[train_indices]
 X_test <- X[-train_indices, ]
@@ -40,7 +41,7 @@ reglog_accuracy <- mean(reglog_pred_class == y_test)
 reglog_log_likelihood <- reglog_model$get_log_likelihood()
 reglog_coefficients <- reglog_model$get_coefficients()
 reglog_computation_time <- as.numeric(reglog_end_time - reglog_start_time)
-Initialize the class
+
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -57,7 +58,8 @@ Initialize the class
 
 \item{\code{n_features}}{The number of features in the model.}
 
-\item{\code{ll}}{The log-likelihood of the model.}
+\item{\code{ll}}{The log-likelihood of the model.
+Initialize the class}
 }
 \if{html}{\out{</div>}}
 }
@@ -76,7 +78,8 @@ Initialize the class
 
 \item{\code{n_features}}{The number of features in the model.}
 
-\item{\code{ll}}{The log-likelihood of the model.}
+\item{\code{ll}}{The log-likelihood of the model.
+Initialize the class}
 }
 \if{html}{\out{</div>}}
 }

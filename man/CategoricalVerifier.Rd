@@ -14,17 +14,20 @@ on user-defined preferences or defaults.
 \examples{
 # Load Titanic dataset
 
-library(ggplot2)
+set.seed(123)
 
-data <- as.data.frame(Titanic)
-data <- data[rep(seq_len(nrow(data)), data$Freq), ]
-data$Freq <- NULL
-data$Survived <- factor(data$Survived, levels = c("No", "Yes"))
-data$Class <- factor(data$Class)
+# Generate a sample dataset
+data <- data.frame(
+  Sex = sample(c("Male", "Female"), 100, replace = TRUE),
+  Age = sample(c("Child", "Adult"), 100, replace = TRUE),
+  Survived = sample(c("No", "Yes"), 100, replace = TRUE),
+  Class = sample(c("1st", "2nd", "3rd", "Crew"), 100, replace = TRUE)
+)
+
 data$Sex <- factor(data$Sex)
 data$Age <- factor(data$Age)
-
-library(LogRegSisem2)
+data$Survived <- factor(data$Survived, levels = c("No", "Yes"))
+data$Class <- factor(data$Class)
 
 # Choose any of the categories available to encode: 
 # label = label encoding (Default), 

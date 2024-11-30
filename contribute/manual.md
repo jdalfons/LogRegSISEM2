@@ -4,6 +4,34 @@
 
 `renv` is a package that helps manage R dependencies for your project. Here are the steps to use `renv` effectively:
 
+### Testing
+
+We are using `testthat` as a library to create and run tests.
+
+### Creating a New Test
+
+1. To create a new test, add a file in the `tests/testthat/` directory with a name that reflects the purpose of the test, for example, `tests/testthat/test-your-feature.R`.
+
+2. Write your test cases in the new file using the `testthat` functions. Here is an example:
+
+    ```r
+    test_that("example test", {
+      expect_equal(1 + 1, 2)
+    })
+    ```
+
+### Running Tests
+
+1. To run the tests in the console, use the following commands:
+
+    ```r
+    library(testthat)
+    test_dir("tests/testthat")
+    ```
+
+    This will execute all the test files in the `tests/testthat/` directory and display the results in the console.
+
+
 ### Initializing `renv`
 
 1. To initialize `renv` in your project, run the following command:
@@ -118,6 +146,29 @@ By following these steps, you can effectively manage your project's dependencies
 
 - Avoid manually modifying the `NAMESPACE` and `renv.lock` files. These files are managed by Roxygen2 and `renv` respectively, and manual changes can lead to inconsistencies or errors.
 - Always use the appropriate tools and commands to update these files to ensure they remain in sync with your code and environment.
+
+## Adding Imports to the `DESCRIPTION` File
+
+1. Open the `DESCRIPTION` file located in the root directory of your project.
+2. To manually add an import, locate the `Imports:` section and add the package name. For example:
+
+    ```
+    Imports:
+        dplyr,
+        ggplot2
+    ```
+
+3. Alternatively, you can use the `usethis` package to add imports programmatically. Run the following command for each package you want to import:
+
+    ```r
+    usethis::use_package("package_name")
+    ```
+
+    Replace `"package_name"` with the name of the package you want to import.
+
+4. Save the changes to the `DESCRIPTION` file.
+
+By following these steps, you can ensure that all necessary packages are listed in the `DESCRIPTION` file, which is crucial for package dependencies.
 
 ## Summary
 
