@@ -4,6 +4,8 @@
 # LogRegSISEM2
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/jdalfons/M2-SISE-R-Library/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jdalfons/M2-SISE-R-Library/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 [![Last
