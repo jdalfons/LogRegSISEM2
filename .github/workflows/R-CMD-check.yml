@@ -48,6 +48,8 @@ jobs:
 
     - name: Install dependencies
       run: |
+        R -e "if (!requireNamespace('renv', quietly = TRUE)) install.packages('renv', repos = 'https://cloud.r-project.org')"
+        R -e "renv::restore(lockfile = 'renv.lock')"
         R -e "if (!requireNamespace('devtools', quietly = TRUE)) install.packages('devtools', repos = 'https://cloud.r-project.org')"
         R -e "devtools::install_deps(dependencies = TRUE)"
         R -e "install.packages(c('rcmdcheck', 'covr'), repos = 'https://cloud.r-project.org')"
