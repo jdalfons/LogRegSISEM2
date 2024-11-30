@@ -10,7 +10,8 @@
 
 [![Last
 Commit](https://img.shields.io/github/last-commit/jdalfons/LogRegSISEM2)](https://github.com/jdalfons/LogRegSISEM2)
-
+[![GitHub Workflow
+Status](https://img.shields.io/github/workflow/status/jdalfons/LogRegSISEM2/R-CMD-check)](https://github.com/jdalfons/LogRegSISEM2/actions)
 
 LogRegSISEM2 is an R package that provides a custom implementation of
 multinomial logistic regression using gradient descent optimization.
@@ -40,8 +41,6 @@ devtools::install_github("jdalfons/LogRegSISEM2")
 ```
 
 ## Usage
-
-### Categorical var encoder
 
 ### Categorical var encoder
 

@@ -2,6 +2,9 @@
 
 Thank you for considering contributing to this project! Here are the steps to get started:
 
+## Commands and recommendations
+To know more about commands to use and how to manage files in RStudio for this project, please check [contribution recommendations](https://gist.github.com/jdalfons/dac5e3a28a1611729bcbd2bb796323d2#file-manual-rpackages-manage-md).
+
 ## Fork the Repository
 
 1. Navigate to the repository on GitHub.
@@ -34,10 +37,6 @@ Thank you for considering contributing to this project! Here are the steps to ge
     ```bash
     git commit -m "Description of the changes"
     ```
-
-## Contribute
-
-To contribute to this project, please refer to the [contribution guidelines](https://github.com/jdalfons/LogRegSISEM2/blob/main/contribute/manual.md).
 
 ## Push Changes
 
