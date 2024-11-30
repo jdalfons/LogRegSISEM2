@@ -3,13 +3,22 @@
 \docType{class}
 \name{LogisticRegression}
 \alias{LogisticRegression}
-\title{Logistic Regression Model with Gradient Descent Optimization}
+\title{Logistic Regression Model with Advanced Gradient Descent Optimization}
 \description{
-This R6 class implements a logistic regression model with gradient descent optimization.
+This R6 class implements a flexible logistic regression model with gradient descent optimization,
+supporting various regularization techniques and binary classification.
+}
+\details{
+The LogisticRegression class provides a comprehensive implementation of logistic regression with the following features:
+\itemize{
+\item Gradient descent optimization
+\item Optional L1 (Lasso) and L2 (Ridge) regularization
+\item Flexible binary classification with custom threshold
+\item Built-in model performance and diagnostic methods
+}
 }
 \examples{
-# Generate synthetic dataset similar to your previous example
-# But now we'll use iris dataset for a more standard comparison
+# Generate synthetic dataset using iris
 data(iris)
 
 # Convert to binary classification (setosa vs. others)
@@ -17,71 +26,35 @@ iris_binary <- iris[iris$Species != "versicolor", ]
 iris_binary$Species <- ifelse(iris_binary$Species == "setosa", 1, 0)
 
 # Prepare features and target
-X <- as.matrix(iris_binary[, c("Sepal.Length", "Sepal.Width")])
+X <- iris_binary[, c("Sepal.Length", "Sepal.Width")]
 y <- iris_binary$Species
 
 # Split data
 set.seed(123)
 train_indices <- sample(seq_len(nrow(X)), size = 0.8 * nrow(X))
 X_train <- X[train_indices, ]
-y_train <- y[train_indices]
+# Model Get Y as factor
+y_train <- as.factor(y[train_indices])
 X_test <- X[-train_indices, ]
 y_test <- y[-train_indices]
 
-# Method 1: Custom R6 Logistic Regression
-reglog_model <- LogisticRegression$new(learning_rate = 0.01, iterations = 1000)
-reglog_start_time <- Sys.time()
+# Create and train logistic regression model
+reglog_model <- LogisticRegression$new(
+  learning_rate = 0.01, 
+  iterations = 1000, 
+  lambda = 0.1
+)
 reglog_model$fit(X_train, y_train)
-reglog_pred_proba <- reglog_model$predict_proba(X_test)
-reglog_pred_class <- reglog_model$predict(X_test)
-reglog_end_time <- Sys.time()
 
-# Calculate R6 Model Performance
-reglog_accuracy <- mean(reglog_pred_class == y_test)
-reglog_log_likelihood <- reglog_model$get_log_likelihood()
-reglog_coefficients <- reglog_model$get_coefficients()
-reglog_computation_time <- as.numeric(reglog_end_time - reglog_start_time)
+# Make predictions
+predictions <- reglog_model$predict(X_test)
+probabilities <- reglog_model$predict_proba(X_test)
 
-}
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{learning_rate}}{The learning rate for gradient descent. Default is 0.01.}
+# Inspect model
+reglog_model$summary()
 
-\item{\code{iterations}}{The number of iterations for gradient descent. Default is 1000.}
+# Constructor for Logistic Regression Model
 
-\item{\code{X}}{The feature matrix with an added intercept term.}
-
-\item{\code{y}}{The response vector.}
-
-\item{\code{beta}}{The coefficients of the logistic regression model.}
-
-\item{\code{n_features}}{The number of features in the model.}
-
-\item{\code{ll}}{The log-likelihood of the model.
-Initialize the class}
-}
-\if{html}{\out{</div>}}
-}
-\section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{learning_rate}}{The learning rate for gradient descent. Default is 0.01.}
-
-\item{\code{iterations}}{The number of iterations for gradient descent. Default is 1000.}
-
-\item{\code{X}}{The feature matrix with an added intercept term.}
-
-\item{\code{y}}{The response vector.}
-
-\item{\code{beta}}{The coefficients of the logistic regression model.}
-
-\item{\code{n_features}}{The number of features in the model.}
-
-\item{\code{ll}}{The log-likelihood of the model.
-Initialize the class}
-}
-\if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -90,6 +63,8 @@ Initialize the class}
 \item \href{#method-LogisticRegression-fit}{\code{LogisticRegression$fit()}}
 \item \href{#method-LogisticRegression-predict_proba}{\code{LogisticRegression$predict_proba()}}
 \item \href{#method-LogisticRegression-predict}{\code{LogisticRegression$predict()}}
+\item \href{#method-LogisticRegression-print}{\code{LogisticRegression$print()}}
+\item \href{#method-LogisticRegression-summary}{\code{LogisticRegression$summary()}}
 \item \href{#method-LogisticRegression-log_likelihood}{\code{LogisticRegression$log_likelihood()}}
 \item \href{#method-LogisticRegression-get_coefficients}{\code{LogisticRegression$get_coefficients()}}
 \item \href{#method-LogisticRegression-get_log_likelihood}{\code{LogisticRegression$get_log_likelihood()}}
@@ -101,18 +76,30 @@ Initialize the class}
 \if{latex}{\out{\hypertarget{method-LogisticRegression-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{LogisticRegression$new(learning_rate = 0.01, iterations = 1000)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{LogisticRegression$new(
+  learning_rate = 0.01,
+  iterations = 1000,
+  penalty = "none",
+  lambda = 0
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{learning_rate}}{The learning rate for gradient descent. Default is 0.01.}
+\item{\code{learning_rate}}{Numeric learning rate for gradient descent (default: 0.01)}
 
-\item{\code{iterations}}{The number of iterations for gradient descent. Default is 1000.
-Train the model using gradient descent}
+\item{\code{iterations}}{Number of gradient descent iterations (default: 1000)}
+
+\item{\code{penalty}}{Regularization type: 'none', 'l1', or 'l2' (default: 'none')}
+
+\item{\code{lambda}}{Regularization strength (default: 0)}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A new LogisticRegression object instance
+Fit the Logistic Regression Model
 }
 }
 \if{html}{\out{<hr>}}
@@ -126,12 +113,15 @@ Train the model using gradient descent}
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{X}}{The feature matrix.}
+\item{\code{X}}{Input feature matrix or data frame}
 
-\item{\code{y}}{The response vector.
-Predict probabilities}
+\item{\code{y}}{Target variable vector}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+The fitted model object (self)
+Predict Probabilities
 }
 }
 \if{html}{\out{<hr>}}
@@ -145,13 +135,13 @@ Predict probabilities}
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{new_X}}{The new feature matrix.}
+\item{\code{new_X}}{New data for prediction}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A vector of predicted probabilities.
-Predict classes
+Vector of predicted probabilities
+Predict Classes
 }
 }
 \if{html}{\out{<hr>}}
@@ -165,15 +155,41 @@ Predict classes
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{new_X}}{The new feature matrix.}
+\item{\code{new_X}}{New data for prediction}
 
-\item{\code{threshold}}{The threshold for class prediction. Default is 0.5.}
+\item{\code{threshold}}{Probability threshold for classification (default: 0.5)}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A vector of predicted classes.
-Log-likelihood calculation
+Vector of predicted classes
+Print Model Information
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-LogisticRegression-print"></a>}}
+\if{latex}{\out{\hypertarget{method-LogisticRegression-print}{}}}
+\subsection{Method \code{print()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{LogisticRegression$print()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+NULL (prints to console)
+Summarize Model
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-LogisticRegression-summary"></a>}}
+\if{latex}{\out{\hypertarget{method-LogisticRegression-summary}{}}}
+\subsection{Method \code{summary()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{LogisticRegression$summary()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+NULL (prints to console)
+Calculate Log-Likelihood
 }
 }
 \if{html}{\out{<hr>}}
@@ -185,8 +201,8 @@ Log-likelihood calculation
 }
 
 \subsection{Returns}{
-The log-likelihood of the model.
-Getter for coefficients
+Numeric log-likelihood value
+Get Model Coefficients
 }
 }
 \if{html}{\out{<hr>}}
@@ -198,8 +214,8 @@ Getter for coefficients
 }
 
 \subsection{Returns}{
-The coefficients of the logistic regression model.
-Getter for log-likelihood
+Named vector of coefficients
+Get Log-Likelihood
 }
 }
 \if{html}{\out{<hr>}}
@@ -211,7 +227,11 @@ Getter for log-likelihood
 }
 
 \subsection{Returns}{
-The log-likelihood of the model.
+Stored log-likelihood value
+Sigmoid activation function
+
+z Input values
+return Sigmoid transformed values
 }
 }
 \if{html}{\out{<hr>}}
