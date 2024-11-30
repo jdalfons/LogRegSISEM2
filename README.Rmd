@@ -47,8 +47,6 @@ devtools::install_github("jdalfons/LogRegSISEM2")
 
 ### Categorical var encoder
 
-### Categorical var encoder
-
 Here is an example of how to use the categorical variable encoder with the Titanic dataset:
 
 ```r
