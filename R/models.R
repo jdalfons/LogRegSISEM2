@@ -8,13 +8,6 @@ library(R6)
 #' @name LogisticRegression
 #' @import R6
 #' @export
-#' @field learning_rate The learning rate for gradient descent. Default is 0.01.
-#' @field iterations The number of iterations for gradient descent. Default is 1000.
-#' @field X The feature matrix with an added intercept term.
-#' @field y The response vector.
-#' @field beta The coefficients of the logistic regression model.
-#' @field n_features The number of features in the model.
-#' @field ll The log-likelihood of the model.
 #' @method LogisticRegression initialize
 #' @method LogisticRegression fit
 #' @method LogisticRegression predict_proba
@@ -38,7 +31,8 @@ library(R6)
 #' y <- iris_binary$Species
 #'
 #' # Split data
-#' train_indices <- createDataPartition(y, p = 0.8, list = FALSE)
+#' set.seed(123)
+#' train_indices <- sample(seq_len(nrow(X)), size = 0.8 * nrow(X))
 #' X_train <- X[train_indices, ]
 #' y_train <- y[train_indices]
 #' X_test <- X[-train_indices, ]
@@ -57,8 +51,16 @@ library(R6)
 #' reglog_log_likelihood <- reglog_model$get_log_likelihood()
 #' reglog_coefficients <- reglog_model$get_coefficients()
 #' reglog_computation_time <- as.numeric(reglog_end_time - reglog_start_time)
+#' 
 LogisticRegression <- R6Class("LogisticRegression",
   public = list(
+    #' @field learning_rate The learning rate for gradient descent. Default is 0.01.
+    #' @field iterations The number of iterations for gradient descent. Default is 1000.
+    #' @field X The feature matrix with an added intercept term.
+    #' @field y The response vector.
+    #' @field beta The coefficients of the logistic regression model.
+    #' @field n_features The number of features in the model.
+    #' @field ll The log-likelihood of the model.
     #' Initialize the class
     #' @param learning_rate The learning rate for gradient descent. Default is 0.01.
     #' @param iterations The number of iterations for gradient descent. Default is 1000.

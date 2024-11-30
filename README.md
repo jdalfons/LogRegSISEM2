@@ -4,7 +4,13 @@
 # LogRegSISEM2
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/jdalfons/M2-SISE-R-Library/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jdalfons/M2-SISE-R-Library/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
+
+[![Last
+Commit](https://img.shields.io/github/last-commit/jdalfons/LogRegSISEM2)](https://github.com/jdalfons/LogRegSISEM2)
+
 
 LogRegSISEM2 is an R package that provides a custom implementation of
 multinomial logistic regression using gradient descent optimization.
