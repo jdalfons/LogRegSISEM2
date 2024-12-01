@@ -1,11 +1,11 @@
 Package: LogRegSISEM2
 Type: Package
 Title: Multinomial Logistic Regression
-Version: 0.3.0
+Version: 0.3.1
 Authors@R:
     person("Juan", "Alfonso", , "jalfonsooc@univ-lyon2.fr", role = c("aut", "cre"),
            comment = c(ORCID = "0009-0008-3105-0285"))
-Description: Logistic regression hand made package made for Students of M2 SISE of Lyon in France
+Description: This package provides a custom implementation of multinomial logistic regression using gradient descent optimization. It is designed for students of the M2 SISE program at Lyon in France and includes various encoding methods for categorical variables and tools to evaluate model performance.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
