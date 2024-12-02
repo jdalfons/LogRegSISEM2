@@ -69,7 +69,6 @@
 #' @export
 
 #library(R6)
-#library(FactoMineR)
 #library(dplyr)
 LogisticRegression  <- R6Class("LogisticRegression",
   public = list(
@@ -135,17 +134,18 @@ LogisticRegression  <- R6Class("LogisticRegression",
       is_categorical <- sapply(X, is.factor) | sapply(X, is.character)
       print(paste("Valeur actuelle de self$transformation_type :", self$transformation_type))
       
-      if (any(is_numeric) && any(is_categorical)) {
-        print("Donnees mixtes detectees : application de l'AFDM.")
-        self$transformation_type <- "FAMD"
-        self$transformation_model <- FAMD(X, graph = FALSE)
-        processed_data <- as.data.frame(self$transformation_model$ind$coord)
-      } else if (all(is_categorical)) {
-        print("Donnees categorielle detectees : application de l'ACM.")
-        self$transformation_type <- "MCA"
-        self$transformation_model <- MCA(X, graph = FALSE)
-        processed_data <- as.data.frame(self$transformation_model$ind$coord)
-      } else if (all(is_numeric)) {
+      #if (any(is_numeric) && any(is_categorical)) {
+        #print("Donnees mixtes detectees : application de l'AFDM.")
+        #self$transformation_type <- "FAMD"
+        #self$transformation_model <- FAMD(X, graph = FALSE)
+        #processed_data <- as.data.frame(self$transformation_model$ind$coord)
+      #} else if (all(is_categorical)) {
+        #print("Donnees categorielle detectees : application de l'ACM.")
+        #self$transformation_type <- "MCA"
+        #self$transformation_model <- MCA(X, graph = FALSE)
+        #processed_data <- as.data.frame(self$transformation_model$ind$coord)
+      #} else 
+      if (all(is_numeric)) {
         print("Donnees quantitatives detectees : normalisation.")
         self$transformation_type <- "scale"
         self$transformation_model <- scale(X, center = TRUE, scale = TRUE)
