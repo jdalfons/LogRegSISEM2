@@ -3,3 +3,4 @@
 export(CategoricalVerifier)
 export(LogisticRegression)
 import(R6)
+import(dplyr)
