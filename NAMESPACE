@@ -2,6 +2,5 @@
 
 export(CategoricalVerifier)
 export(LogisticRegression)
-import(FactoMineR)
 import(R6)
 import(dplyr)

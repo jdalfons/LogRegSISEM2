@@ -64,7 +64,6 @@
 #' importance <- model$var_importance()
 #'
 #' @import R6
-#' @import FactoMineR
 #' @import dplyr
 #' @export
 
