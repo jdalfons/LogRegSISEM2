@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [0.3.1] - 2024-12-01
+
+### Added
+- Added tests for `LogisticRegression` class.
+- Added tests for categorical encoders.
+- Implemented `get_coefficients` method in `LogisticRegression` class.
+- Implemented `get_log_likelihood` method in `LogisticRegression` class.
+- Improved summary output for `LogisticRegression` class.
+- Added enhanced correlation heatmap visualization.
+
+### Changed
+- Updated version number to 0.3.1.
+- Improved documentation for `LogisticRegression` class.
+- Enhanced the `apply_encoding` method in `CategoricalVerifier` class.
+
+### Fixed
+- Fixed issues with encoding methods in `CategoricalVerifier` class.
+- Resolved errors in `devtools::check()` related to file paths.
+- Corrected `LICENSE` file pointer in `DESCRIPTION` file.
+
+
 ## [0.3.0] - 2024-11-30
 
 ### Added
