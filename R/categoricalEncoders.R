@@ -17,6 +17,7 @@ library(R6)
 #' @field categorical_vars Names of categorical variables in the dataset.
 #' @field encoded_vars A list of encoded variables.
 #' @field encoding_dict A dictionary specifying encoding methods for each variable.
+#' @field target_var The name of the target variable.
 #' @method CategoricalVerifier initialize
 #' @method CategoricalVerifier verify_categorical_vars
 #' @method CategoricalVerifier label_encoding
@@ -55,7 +56,7 @@ library(R6)
 #' encoding_dict = list(Sex = "frequency", Age = "binary")
 #' 
 #' # Create the categorical verifier
-#' verifier <- CategoricalVerifier$new(data, encoding_dict = encoding_dict)
+#' verifier <- CategoricalVerifier$new(data, encoding_dict = encoding_dict, target_var = "Survived")
 #' 
 #' # Apply the encoding
 #' verifier$apply_encoding()

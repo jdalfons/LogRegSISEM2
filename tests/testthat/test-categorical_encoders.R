@@ -20,7 +20,7 @@ test_that("CategoricalVerifier encoding works correctly", {
   encoding_dict <- list(Sex = "frequency", Age = "binary")
 
   # Create the categorical verifier
-  verifier <- CategoricalVerifier$new(data, encoding_dict = encoding_dict)
+  verifier <- CategoricalVerifier$new(data, encoding_dict = encoding_dict, target_var = "Survived")
 
   # Apply the encoding
   verifier$apply_encoding()
@@ -39,4 +39,8 @@ test_that("CategoricalVerifier encoding works correctly", {
   # Check that the encoded values are within the expected range
   expect_true(all(encoded_data$Sex >= 0 & encoded_data$Sex <= 1))
   expect_true(all(encoded_data$Age >= 0 & encoded_data$Age <= 1))
+
+  # Check that the Survived column values are equal to the original data$Survived values
+  expect_equal(encoded_data$Survived, data$Survived)
+
 })

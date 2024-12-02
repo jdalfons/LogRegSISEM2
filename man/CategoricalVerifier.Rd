@@ -40,7 +40,7 @@ data$Class <- factor(data$Class)
 encoding_dict = list(Sex = "frequency", Age = "binary")
 
 # Create the categorical verifier
-verifier <- CategoricalVerifier$new(data, encoding_dict = encoding_dict)
+verifier <- CategoricalVerifier$new(data, encoding_dict = encoding_dict, target_var = "Survived")
 
 # Apply the encoding
 verifier$apply_encoding()
@@ -64,6 +64,8 @@ print(processed_data)
 \item{\code{encoded_vars}}{A list of encoded variables.}
 
 \item{\code{encoding_dict}}{A dictionary specifying encoding methods for each variable.}
+
+\item{\code{target_var}}{The name of the target variable.}
 }
 \if{html}{\out{</div>}}
 }
@@ -87,7 +89,7 @@ print(processed_data)
 \subsection{Method \code{new()}}{
 Initialize the CategoricalVerifier class.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CategoricalVerifier$new(dataset, encoding_dict = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CategoricalVerifier$new(dataset, encoding_dict = NULL, target_var = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -97,6 +99,8 @@ Initialize the CategoricalVerifier class.
 
 \item{\code{encoding_dict}}{A named list specifying encoding methods for categorical variables.
 Defaults to NULL, which uses label encoding for all variables.}
+
+\item{\code{target_var}}{A character string representing the name of the target variable.}
 }
 \if{html}{\out{</div>}}
 }
