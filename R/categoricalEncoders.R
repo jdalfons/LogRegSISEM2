@@ -68,9 +68,11 @@ library(R6)
 #' processed_data <- verifier$get_dataset()
 #' print(processed_data)
 #'
+
 CategoricalVerifier <- R6Class("CategoricalVerifier",
   public = list(
     dataset = NULL,
+    target_var = NULL,
     categorical_vars = NULL,
     encoded_vars = list(),
     encoding_dict = NULL,
@@ -80,10 +82,15 @@ CategoricalVerifier <- R6Class("CategoricalVerifier",
     #' @param dataset A \code{data.frame} containing the dataset to be processed.
     #' @param encoding_dict A named list specifying encoding methods for categorical variables.
     #'   Defaults to NULL, which uses label encoding for all variables.
-    initialize = function(dataset, encoding_dict = NULL) {
+    #' @param target_var A character string representing the name of the target variable.
+    initialize = function(dataset, encoding_dict = NULL, target_var = NULL) {
+      if (is.null(target_var)) {
+        stop("Error: No target variable specified for logistic regression.")
+      }
       self$dataset <- dataset
       self$categorical_vars <- self$verify_categorical_vars()
       self$encoding_dict <- encoding_dict
+      self$target_var <- target_var
     },
 
     #' @description
@@ -150,10 +157,13 @@ CategoricalVerifier <- R6Class("CategoricalVerifier",
     apply_encoding = function() {
       if (is.null(self$encoding_dict)) {
         for (var in self$categorical_vars) {
-          self$label_encoding(var)
-        }
-      } else {
+            if (var != self$target_var) {
+              self$label_encoding(var)
+            }
+          }
+        } else {
         for (var in self$categorical_vars) {
+          if (var != self$target_var) {
           encoding_method <- self$encoding_dict[[var]]
           if (is.null(encoding_method)) {
             self$label_encoding(var)
@@ -167,6 +177,7 @@ CategoricalVerifier <- R6Class("CategoricalVerifier",
             self$binary_encoding(var)
           } else {
             stop(paste("Unknown encoding method for variable:", var))
+          }
           }
         }
       }
