@@ -105,8 +105,7 @@ LogisticRegression  <- R6Class("LogisticRegression",
       self$num_iterations <- num_iterations
       self$weights <- NULL
       self$bias <- NULL
-      print(paste("Valeur actuelle de self$transformation_type :", self$transformation_type))
-    },
+   },
     #' @description Compute the softmax transformation for the input matrix.
     #' @param z A numeric matrix. Input for the softmax function.
     #' @return A numeric matrix with softmax-applied values.
@@ -131,8 +130,6 @@ LogisticRegression  <- R6Class("LogisticRegression",
       # Verifier la structure des colonnes
       is_numeric <- sapply(X, is.numeric)
       is_categorical <- sapply(X, is.factor) | sapply(X, is.character)
-      print(paste("Valeur actuelle de self$transformation_type :", self$transformation_type))
-      
       #if (any(is_numeric) && any(is_categorical)) {
         #print("Donnees mixtes detectees : application de l'AFDM.")
         #self$transformation_type <- "FAMD"
@@ -145,7 +142,6 @@ LogisticRegression  <- R6Class("LogisticRegression",
         #processed_data <- as.data.frame(self$transformation_model$ind$coord)
       #} else 
       if (all(is_numeric)) {
-        print("Donnees quantitatives detectees : normalisation.")
         self$transformation_type <- "scale"
         self$transformation_model <- scale(X, center = TRUE, scale = TRUE)
         processed_data <- as.data.frame(scale(X, center = attr(self$transformation_model, "scaled:center"), scale = attr(self$transformation_model, "scaled:scale")))
@@ -160,16 +156,13 @@ LogisticRegression  <- R6Class("LogisticRegression",
     #' @param y Factor or vector. Target labels.
     fit = function(X, y) {
       X <- self$preprocess_data(X)
-      print(paste("Transformation utilisee dans fit apres preprocess_data :", self$transformation_type))  # Verification
       X <- as.matrix(X)
       m <- nrow(X)
       n <- ncol(X)
       # Sauvegarde des classes d'origine
       self$original_classes <- levels(as.factor(y))
-      print(paste("Classes d'origine :", paste(self$original_classes, collapse = ", ")))
       self$num_classes <- length(self$original_classes)
       y <- as.integer(as.factor(y))
-      print(paste("Classes encodees :", paste(unique(y), collapse = ", ")))
       y_one_hot <- matrix(0, nrow = m, ncol = self$num_classes)
       for (i in 1:m) {
         y_one_hot[i, y[i]] <- 1
@@ -198,13 +191,10 @@ LogisticRegression  <- R6Class("LogisticRegression",
         stop("La transformation n'a pas ete definie. Veuillez appeler la methode `fit` avant `predict`.")
       }
       if (self$transformation_type == "FAMD") {
-        print("Application de l'AFDM sur les nouvelles donnees.")
         processed_data <- predict(self$transformation_model, newdata = X_new)$coord
       } else if (self$transformation_type == "MCA") {
-        print("Application de l'ACM sur les nouvelles donnees.")
         processed_data <- predict(self$transformation_model, newdata = X_new)$coord
       } else if (self$transformation_type == "scale") {
-        print("Application de la normalisation sur les nouvelles donnees.")
         processed_data <- as.data.frame(scale(X_new, center = attr(self$transformation_model, "scaled:center"), scale = attr(self$transformation_model, "scaled:scale")))
       } else {
         stop("Aucune transformation enregistree pour ces donnees.")
@@ -217,6 +207,7 @@ LogisticRegression  <- R6Class("LogisticRegression",
     #' @param X Data frame or matrix. Features for prediction.
     #' @return A matrix of probabilities.
     predict_proba = function(X) {
+      X <- self$preprocess_new_data(X)
       if (!is.matrix(X)) {
         X <- as.data.frame(lapply(X, as.numeric))
         X <- as.matrix(X)
@@ -230,7 +221,6 @@ LogisticRegression  <- R6Class("LogisticRegression",
     #' @param X Data frame or matrix. Features for prediction.
     #' @return A vector of predicted labels.
     predict = function(X) {
-      X <- self$preprocess_new_data(X)
       probas <- self$predict_proba(X)
       print("Distribution des probabilites pour chaque classe :")
       predicted_indices <- max.col(probas)

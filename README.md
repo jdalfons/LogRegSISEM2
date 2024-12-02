@@ -42,8 +42,7 @@ devtools::install_github("jdalfons/LogRegSISEM2")
 
 ### Categorical var encoder
 
-Here is an example of how to use the categorical variable encoder with
-the Titanic dataset:
+<!-- Here is an example of how to use the categorical variable encoder with the Titanic dataset: -->
 
 ``` r
 # Load Titanic dataset
@@ -118,63 +117,47 @@ print(processed_data)
 
 ### Logistic Regression model
 
-On the following exemple we will use iris dataset to
+On the following example we will use the diamonds dataset to
 
 ``` r
-library(caret)
+# Load required libraries
 library(LogRegSISEM2)
 
-data(iris)
-  
-# Convert to binary classification (setosa vs. others)
-iris_binary <- iris[iris$Species != "versicolor", ]
-iris_binary$Species <- ifelse(iris_binary$Species == "setosa", 1, 0)
+# Load the diamonds dataset
+data("diamonds", package = "ggplot2")
+diamond_data <- diamonds
 
-# Prepare features and target
-X <- as.matrix(iris_binary[, c("Sepal.Length", "Sepal.Width")])
-y <- iris_binary$Species
+# Categorical Encoding
+verifier <- CategoricalVerifier$new(diamond_data)
+verifier$apply_encoding()
+encoded_data <- verifier$get_dataset()
 
-# Split data
-train_indices <- createDataPartition(y, p = 0.8, list = FALSE)
-X_train <- X[train_indices, ]
-y_train <- y[train_indices]
-X_test <- X[-train_indices, ]
-y_test <- y[-train_indices]
-```
+# Prepare the data
+X <- encoded_data[, !names(encoded_data) %in% "cut"]
+y <- ifelse(diamonds$cut == "Ideal", 1, 0)
 
-Apply logistic regression
+# Initialize and fit the Logistic Regression model
+model <- LogisticRegression$new(learning_rate = 0.05, num_iterations = 500)
+model$fit(X, y)
 
-``` r
-library(LogRegSISEM2)
+# Predictions and Probabilities
+predictions <- model$predict(X)
+probabilities <- as.numeric(model$predict_proba(X))
 
-reglog_model <- LogisticRegression$new(learning_rate = 0.01, iterations = 1000)
-reglog_start_time <- Sys.time()
-reglog_model$fit(X_train, y_train)
-reglog_pred_proba <- reglog_model$predict_proba(X_test)
-reglog_pred_class <- reglog_model$predict(X_test)
-reglog_end_time <- Sys.time()
-```
+# Print Model Metrics
+cat("Model Summary:\n")
+model$summary()
 
-Get performance mesures
+cat("\nFeature Importance:\n")
+print(importance)
 
-``` r
-# Calculate R6 Model Performance
-reglog_accuracy <- mean(reglog_pred_class == y_test)
-reglog_log_likelihood <- reglog_model$get_log_likelihood()
-reglog_coefficients <- reglog_model$get_coefficients()
+cat("\nModel Log-Likelihood:\n")
+log_likelihood <- model$compute_cost(y, probabilities)
+print(log_likelihood)
 
-# Output results
-cat("Accuracy:", reglog_accuracy, "\n")
-cat("Log-Likelihood:", reglog_log_likelihood, "\n")
-cat("Coefficients:", reglog_coefficients, "\n")
-```
-
-\*\* Output: \*\*
-
-``` sh
-> Accuracy: 1 
-> Log-Likelihood: -24.07341 
-> Coefficients: 0.3097684 -0.9693679 1.620301 
+# Performance Metrics
+accuracy <- mean(predictions == y)
+cat("\nModel Accuracy:", accuracy, "\n")
 ```
 
 ## Contribute
