@@ -87,10 +87,10 @@ encoding than the default one (Label encoding) in this case only for
 exemple we will encode Sex and Age
 
 ``` r
-encoding_dict = list(Sex = "frequency", Age = "binary")
+encoding_dict = list(Sex = "frequency", Survived = "binary")
 
 # Create the categorical verifier
-verifier <- CategoricalVerifier$new(data, encoding_dict = encoding_dict)
+verifier <- CategoricalVerifier$new(data, encoding_dict = encoding_dict, target_var = "Class")
 
 # Apply the encoding
 verifier$apply_encoding()
