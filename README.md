@@ -173,7 +173,7 @@ This project is licensed under the MIT License.
 
 | Nom | GitHub Profile |
 |----|----|
-| ALEXIS DARDELET | [pbrbn](https://github.com/AlexisDardelet) |
+| ALEXIS DARDELET | [AlexisDardelet](https://github.com/AlexisDardelet) |
 | BERTRAND KLEIN | [bertrandklein](https://github.com/bertrandklein) |
 | JUAN DIEGO ALFONSO OCAMPO | [jdalfons](https://github.com/jdalfons) |
 
